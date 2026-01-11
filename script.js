@@ -1,7 +1,4 @@
-
 const gridContainer = document.getElementById('grid-container');
-
-
 
 const createGrid = () => {
 
@@ -20,3 +17,4 @@ const createGrid = () => {
 };
 
 createGrid()
+
