@@ -97,6 +97,42 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (gameOver) return;
+
+    const cells = document.querySelectorAll('.cell');
+    const rowStart = currentRow * 5;
+
+    let guess = "";
+    for (let i = rowStart; i < rowStart + 5; i++) {
+        guess += cells[i].textContent || "";
+    }
+
+    if (guess.length !== 5) {
+        messageDisplay.textContent = "Le mot doit contenir exactement 5 lettres !";
+        return;
+    }
+
+    updateGrid(guess);
+
+    if (guess === secretWord) {
+        messageDisplay.textContent = " Félicitations ! Vous avez trouvé le mot !";
+        gameOver = true;
+        return;
+    }
+
+    currentRow++;
+
+    if (currentRow === 6) {
+        messageDisplay.textContent = ` Défaite ! Le mot était : ${secretWord}`;
+        gameOver = true;
+        return;
+    }
+
+    updateCursor();
+});
+
 const updateGrid = (guess) => {
     const cells = document.querySelectorAll('.cell');
     const validatedLetters = [];
@@ -126,7 +162,7 @@ const newGame = () => {
     currentRow = 0;
     attemptsLeft = 6;
     messageDisplay.textContent = "";
-
+    gameOver = false;
     createGrid();
     pickWord();
     revealFirstLetter();

@@ -45,7 +45,7 @@ h1 {
     bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50%;
+    width: 40%;
     height: 4px;
     background-color: rgb(236, 229, 229); 
     border-radius: 2px;
@@ -75,7 +75,6 @@ button:hover {
     box-shadow: 0 0 20px rgba(63, 169, 245, 1);
     background-color: #123d63;
 }
-
  
 .green {
     background-color: #28a745; 
