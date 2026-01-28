@@ -52,96 +52,49 @@ const updateCursor = () => {
 };
 
 document.addEventListener("keydown", (e) => {
-
-if (gameOver) return;
-
-   
-if (e.key === "Enter") {
-    e.preventDefault();
-
-    const cells = document.querySelectorAll('.cell');
-    const rowStart = currentRow * 5;
-    const rowEnd = rowStart + 5;
-        
-    let complete = true;
-        for (let i = rowStart; i < rowEnd; i++) {
-            if (!cells[i].textContent) {
-                complete = false;
-                break;
-            }
-            } if (complete) {
-            form.requestSubmit(); 
-        } 
-        return; 
-}
-
-    const cells = document.querySelectorAll('.cell');
-    const rowStart = currentRow * 5;
-    const rowEnd = rowStart + 5;
-
- if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
-    for (let i = rowStart; i < rowEnd; i++) {
-        if (!cells[i].textContent) {
-
-            if (currentRow === 0 && i === 0) {
-                cells[i].textContent = secretWord[0];
-                cells[i].classList.add('green');
-            } else {
-                cells[i].textContent = e.key.toUpperCase();
-            }
-
-            updateCursor();
-            break;
-        }
-    }
-}
-
-if (e.key === "Backspace") {
-    for (let i = rowEnd - 1; i >= rowStart; i--) {
-        if (cells[i].textContent && !(currentRow === 0 && i === 0)) {
-            cells[i].textContent = "";
-            break;
-        }
-    }
-     
-    updateCursor();
-    }
-});
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
     if (gameOver) return;
 
     const cells = document.querySelectorAll('.cell');
     const rowStart = currentRow * 5;
+    const rowEnd = rowStart + 5;
 
-    let guess = "";
-    for (let i = rowStart; i < rowStart + 5; i++) {
-        guess += cells[i].textContent || "";
-    }
+    if (e.key === "Enter") {
+        e.preventDefault();
 
-    if (guess.length !== 5) {
-        messageDisplay.textContent = "Le mot doit contenir exactement 5 lettres !";
+        let guess = "";
+        for (let i = rowStart; i < rowEnd; i++) {
+            guess += cells[i].textContent || "";
+        }
+
+        if (guess.length !== 5) {
+            messageDisplay.textContent = "Le mot doit contenir exactement 5 lettres !";
+        } else {
+            form.requestSubmit(); 
+        }
         return;
     }
 
-    updateGrid(guess);
-
-    if (guess === secretWord) {
-        messageDisplay.textContent = " Félicitations ! Vous avez trouvé le mot !";
-        gameOver = true;
+    if (e.key === "Backspace") {
+        for (let i = rowEnd - 1; i >= rowStart; i--) {
+            if (cells[i].textContent && !(currentRow === 0 && i === 0)) {
+                cells[i].textContent = "";
+                break;
+            }
+        }
+        updateCursor();
         return;
     }
 
-    currentRow++;
-
-    if (currentRow === 6) {
-        messageDisplay.textContent = ` Défaite ! Le mot était : ${secretWord}`;
-        gameOver = true;
-        return;
+    if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+        for (let i = rowStart; i < rowEnd; i++) {
+            if (!cells[i].textContent) {
+                cells[i].textContent = (currentRow === 0 && i === 0) ? secretWord[0] : e.key.toUpperCase();
+                if (currentRow === 0 && i === 0) cells[i].classList.add('green');
+                updateCursor();
+                break;
+            }
+        }
     }
-
-    updateCursor();
 });
 
 const updateGrid = (guess) => {
