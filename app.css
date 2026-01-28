@@ -7,7 +7,9 @@ body {
     padding: 20px;
 }
  
-
+h1 {
+    margin-bottom: 20px;
+}
  
 #grid-container {
     display: grid;
@@ -28,5 +30,22 @@ body {
     font-size: 24px;
     border-radius: 5px;
     text-transform: uppercase;
+}
+ 
+input {
+    padding: 10px;
+    font-size: 16px;
+    width: 120px;
+    text-transform: uppercase;
+    font-family: Arial, sans-serif;
+}
+ 
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin-left: 5px;
+    cursor: pointer;
+    border-radius: 9%;
+    border-color: blanchedalmond;
 }
  

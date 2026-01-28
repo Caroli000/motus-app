@@ -1,3 +1,9 @@
+const words = [
+  "POMME","ARBRE","CHAIR","LIVRE","FLEUR","TIGRE","ROUGE","TABLE",
+  "PLAGE","NEIGE","JOUER","BRUIT","PETIT","CHANT","FORCE","GRACE",
+  "NUAGE","ECRAN","ROUTE","SABLE"
+];
+
 const gridContainer = document.getElementById('grid-container');
 
 const createGrid = () => {
