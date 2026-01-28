@@ -45,9 +45,9 @@ h1 {
     bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
+    width: 50%;
     height: 4px;
-    background-color: white; /* visible sur le bleu */
+    background-color: rgb(236, 229, 229); 
     border-radius: 2px;
     animation: blink 1s infinite;
 }

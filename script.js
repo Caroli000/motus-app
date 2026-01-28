@@ -12,7 +12,8 @@ const newGameBtn = document.getElementById('new-game');
 
 let attemptsLeft = 6;
 let currentRow = 0;
-let secretWord = ""; 
+let secretWord = "";
+let gameOver = false; 
 
 const createGrid = () => {
     gridContainer.innerHTML = '';
@@ -51,39 +52,66 @@ const updateCursor = () => {
 };
 
 document.addEventListener("keydown", (e) => {
+
+if (gameOver) return;
+
+   
+if (e.key === "Enter") {
+    e.preventDefault();
+
+    const cells = document.querySelectorAll('.cell');
+    const rowStart = currentRow * 5;
+    const rowEnd = rowStart + 5;
+        
+    let complete = true;
+        for (let i = rowStart; i < rowEnd; i++) {
+            if (!cells[i].textContent) {
+                complete = false;
+                break;
+            }
+            } if (complete) {
+            form.requestSubmit(); 
+        } 
+        return; 
+}
+
     const cells = document.querySelectorAll('.cell');
     const rowStart = currentRow * 5;
     const rowEnd = rowStart + 5;
 
-    if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
-        for (let i = rowStart; i < rowEnd; i++) {
-            if (!cells[i].textContent) {
-            
-                if (currentRow === 0 && i === 0) {
-                    cells[i].textContent = secretWord[0];
-                    cells[i].classList.add('green');
-                } else {
-                    cells[i].textContent = e.key.toUpperCase();
-                }
-                updateCursor();
-                break;
+ if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+    for (let i = rowStart; i < rowEnd; i++) {
+        if (!cells[i].textContent) {
+
+            if (currentRow === 0 && i === 0) {
+                cells[i].textContent = secretWord[0];
+                cells[i].classList.add('green');
+            } else {
+                cells[i].textContent = e.key.toUpperCase();
             }
+
+            updateCursor();
+            break;
         }
     }
+}
 
-    if (e.key === "Backspace") {
-        for (let i = rowEnd - 1; i >= rowStart; i--) {
-            if (cells[i].textContent && !(currentRow === 0 && i === 0)) {
-                cells[i].textContent = "";
-                break;
-            }
+if (e.key === "Backspace") {
+    for (let i = rowEnd - 1; i >= rowStart; i--) {
+        if (cells[i].textContent && !(currentRow === 0 && i === 0)) {
+            cells[i].textContent = "";
+            break;
         }
-        updateCursor();
+    }
+     
+    updateCursor();
     }
 });
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
+    if (gameOver) return;
+
     const cells = document.querySelectorAll('.cell');
     const rowStart = currentRow * 5;
 
@@ -98,14 +126,22 @@ form.addEventListener("submit", (e) => {
     }
 
     updateGrid(guess);
-    currentRow++;
-    updateCursor();
 
     if (guess === secretWord) {
-        messageDisplay.textContent = "Félicitations ! Vous avez trouvé le mot !";
-    } else if (currentRow === 6) {
-        messageDisplay.textContent = `Défaite ! Le mot était : ${secretWord}`;
+        messageDisplay.textContent = " Félicitations ! Vous avez trouvé le mot !";
+        gameOver = true;
+        return;
     }
+
+    currentRow++;
+
+    if (currentRow === 6) {
+        messageDisplay.textContent = ` Défaite ! Le mot était : ${secretWord}`;
+        gameOver = true;
+        return;
+    }
+
+    updateCursor();
 });
 
 const updateGrid = (guess) => {
@@ -146,6 +182,5 @@ const newGame = () => {
 
 
 newGameBtn.addEventListener("click", newGame);
-
 
 newGame();
