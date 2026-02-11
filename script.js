@@ -1,3 +1,4 @@
+// List of possible words for the game (all 5 letters)
 const words = [
   "POMME","ARBRE","CHAIR","LIVRE","FLEUR","TIGRE","ROUGE","TABLE",
   "PLAGE","NEIGE","JOUER","BRUIT","PETIT","CHANT","FORCE","GRACE",
@@ -5,16 +6,20 @@ const words = [
   "SONNE","VILLE"
 ];
 
+// Select DOM elements
 const gridContainer = document.getElementById('grid-container');
 const form = document.getElementById('guess-form');
-const messageDisplay = document.getElementById('message');
+const messageDisplay = document.getElementById('message');   
+const attemptsDisplay = document.getElementById('attempts'); 
 const newGameBtn = document.getElementById('new-game');
 
+// Game variables
 let attemptsLeft = 6;
 let currentRow = 0;
 let secretWord = "";
-let gameOver = false; 
+let gameOver = false;
 
+// Function to create the 6x5 grid
 const createGrid = () => {
     gridContainer.innerHTML = '';
     for (let i = 0; i < 6 * 5; i++) {
@@ -24,20 +29,27 @@ const createGrid = () => {
     }
 };
 
-const pickWord = () => { 
+// Function to pick a random secret word
+const pickWord = () => {
     secretWord = words[Math.floor(Math.random() * words.length)];
-    console.log("Mot secret :", secretWord);
+
 };
 
-const revealFirstLetter = () => { 
+// Function to reveal the first letter of the secret word
+const revealFirstLetter = () => {
     const cells = document.querySelectorAll('.cell');
     cells[0].textContent = secretWord[0];
     cells[0].classList.add('green');
 };
 
+// Function to update remaining attempts display
+function updateAttemptsDisplay() {
+    attemptsDisplay.textContent = "Tentatives restantes: " + attemptsLeft;
+}
+
+// Function to update the visual cursor in the grid
 const updateCursor = () => {
     const cells = document.querySelectorAll('.cell');
-
     cells.forEach(cell => cell.classList.remove('cursor'));
 
     const rowStart = currentRow * 5;
@@ -69,7 +81,7 @@ document.addEventListener("keydown", (e) => {
         if (guess.length !== 5) {
             messageDisplay.textContent = "Le mot doit contenir exactement 5 lettres !";
         } else {
-            form.requestSubmit(); 
+            form.requestSubmit();
         }
         return;
     }
@@ -88,8 +100,14 @@ document.addEventListener("keydown", (e) => {
     if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
         for (let i = rowStart; i < rowEnd; i++) {
             if (!cells[i].textContent) {
-                cells[i].textContent = (currentRow === 0 && i === 0) ? secretWord[0] : e.key.toUpperCase();
-                if (currentRow === 0 && i === 0) cells[i].classList.add('green');
+                cells[i].textContent =
+                    (currentRow === 0 && i === 0)
+                        ? secretWord[0]
+                        : e.key.toUpperCase();
+
+                if (currentRow === 0 && i === 0) {
+                    cells[i].classList.add('green');
+                }
                 updateCursor();
                 break;
             }
@@ -97,6 +115,34 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// Function to update the colors of the grid
+const updateGrid = (guess) => {
+    const cells = document.querySelectorAll('.cell');
+    const validatedLetters = [];
+
+    for (let i = 0; i < 5; i++) {
+        const cell = cells[currentRow * 5 + i];
+        cell.textContent = guess[i];
+
+        if (guess[i] === secretWord[i]) {
+            cell.classList.add('green');
+            validatedLetters.push(guess[i]);
+        }
+    }
+
+    for (let i = 0; i < 5; i++) {
+        const cell = cells[currentRow * 5 + i];
+        if (cell.classList.contains('green')) continue;
+
+        if (secretWord.includes(guess[i]) && !validatedLetters.includes(guess[i])) {
+            cell.classList.add('orange');
+        } else {
+            cell.classList.add('grey');
+        }
+    }
+};
+
+// Form submission handling
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (gameOver) return;
@@ -116,59 +162,40 @@ form.addEventListener("submit", (e) => {
 
     updateGrid(guess);
 
+    attemptsLeft--;              
+    updateAttemptsDisplay();     
+
     if (guess === secretWord) {
-        messageDisplay.textContent = " Félicitations ! Vous avez trouvé le mot !";
+        messageDisplay.textContent = "🎉 Félicitations ! Vous avez trouvé le mot !";
+        gameOver = true;
+        return;
+    }
+
+    if (attemptsLeft === 0) {
+        messageDisplay.textContent = `❌ Défaite ! Le mot était : ${secretWord}`;
         gameOver = true;
         return;
     }
 
     currentRow++;
-
-    if (currentRow === 6) {
-        messageDisplay.textContent = ` Défaite ! Le mot était : ${secretWord}`;
-        gameOver = true;
-        return;
-    }
-
     updateCursor();
 });
 
-const updateGrid = (guess) => {
-    const cells = document.querySelectorAll('.cell');
-    const validatedLetters = [];
 
-    for (let i = 0; i < 5; i++) {
-        const cell = cells[currentRow * 5 + i];
-        cell.textContent = guess[i];
-
-        if (guess[i] === secretWord[i]) {
-            cell.classList.add('green');
-            validatedLetters.push(guess[i]);
-        }
-    }
-    for (let i = 0; i < 5; i++) {
-        const cell = cells[currentRow * 5 + i];
-        if (cell.classList.contains('green')) continue;
-
-        if (secretWord.includes(guess[i]) && !validatedLetters.includes(guess[i])) {
-            cell.classList.add('orange');
-        } else {
-            cell.classList.add('grey');
-        }
-    }
-};
-
-const newGame = () => { 
+// Function to start a new game
+const newGame = () => {
     currentRow = 0;
     attemptsLeft = 6;
-    messageDisplay.textContent = "";
     gameOver = false;
+
+    messageDisplay.textContent = "";
+    updateAttemptsDisplay();
+
     createGrid();
     pickWord();
     revealFirstLetter();
     updateCursor();
 };
-
 
 newGameBtn.addEventListener("click", newGame);
 
