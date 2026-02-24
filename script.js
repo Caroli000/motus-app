@@ -6,48 +6,42 @@ const words = [
   "SONNE","VILLE"
 ];
 
-// Select DOM elements
 const gridContainer = document.getElementById('grid-container');
 const form = document.getElementById('guess-form');
 const messageDisplay = document.getElementById('message');   
 const attemptsDisplay = document.getElementById('attempts'); 
 const newGameBtn = document.getElementById('new-game');
 
-// Game variables
-let attemptsLeft = 6;
+let attemptsLeft = 10;
 let currentRow = 0;
 let secretWord = "";
 let gameOver = false;
 
-// Function to create the 6x5 grid
+
 const createGrid = () => {
     gridContainer.innerHTML = '';
-    for (let i = 0; i < 6 * 5; i++) {
+    for (let i = 0; i < 10 * 5; i++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
         gridContainer.appendChild(cell);
     }
 };
 
-// Function to pick a random secret word
 const pickWord = () => {
     secretWord = words[Math.floor(Math.random() * words.length)];
 
 };
 
-// Function to reveal the first letter of the secret word
 const revealFirstLetter = () => {
     const cells = document.querySelectorAll('.cell');
     cells[0].textContent = secretWord[0];
     cells[0].classList.add('green');
 };
 
-// Function to update remaining attempts display
 function updateAttemptsDisplay() {
     attemptsDisplay.textContent = "Tentatives restantes: " + attemptsLeft;
 }
 
-// Function to update the visual cursor in the grid
 const updateCursor = () => {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => cell.classList.remove('cursor'));
@@ -115,7 +109,6 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// Function to update the colors of the grid
 const updateGrid = (guess) => {
     const cells = document.querySelectorAll('.cell');
     const validatedLetters = [];
@@ -142,7 +135,6 @@ const updateGrid = (guess) => {
     }
 };
 
-// Form submission handling
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (gameOver) return;
@@ -182,10 +174,9 @@ form.addEventListener("submit", (e) => {
 });
 
 
-// Function to start a new game
 const newGame = () => {
     currentRow = 0;
-    attemptsLeft = 6;
+    attemptsLeft = 10;
     gameOver = false;
 
     messageDisplay.textContent = "";
